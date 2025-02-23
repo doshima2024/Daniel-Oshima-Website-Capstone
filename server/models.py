@@ -13,6 +13,24 @@ class Song(db.Model, SerializerMixin):
 
     serialize_rules = ("comments", "-comments.song")
 
+    @validates("title")
+    def validate_title(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Title must be a string")
+        return value
+    
+    @validates("artist")
+    def validate_title(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Artist must be a string")
+        return value
+    
+    @validates("song_url")
+    def validate_title(self, key, value):
+        if not isinstance(value, str):
+            raise TypeError("Song URL must be a string")
+        return value
+
 class Comment(db.Model, SerializerMixin):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
