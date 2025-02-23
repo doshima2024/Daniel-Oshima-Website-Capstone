@@ -15,20 +15,20 @@ class Song(db.Model, SerializerMixin):
 
     @validates("title")
     def validate_title(self, key, value):
-        if not isinstance(value, str):
-            raise TypeError("Title must be a string")
+        if not value or not isinstance(value, str):
+            raise TypeError("Title must exist and be a string")
         return value
     
     @validates("artist")
     def validate_title(self, key, value):
-        if not isinstance(value, str):
-            raise TypeError("Artist must be a string")
+        if not value or not isinstance(value, str):
+            raise TypeError("Artist must exist and be a string")
         return value
     
     @validates("song_url")
     def validate_title(self, key, value):
-        if not isinstance(value, str):
-            raise TypeError("Song URL must be a string")
+        if not value or not isinstance(value, str):
+            raise TypeError("Song URL must exist and be a string")
         return value
 
 class Comment(db.Model, SerializerMixin):
@@ -41,6 +41,20 @@ class Comment(db.Model, SerializerMixin):
     song = db.relationship("Song", back_populates="comments")
 
     serialize_rules = ("song", "-song.comments")
+
+    @validates("user_name")
+    def validate_title(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Username must exist and be a string")
+        return value
+    
+    @validates("comment_content")
+    def validate_comment_content(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Comment must exist and be a string")
+        if len(value) > 250:
+            raise ValueError("Maximum characters for comment is 250")
+        return value
 
 class Guestbook(db.Model):
     __tablename__ = "guestbooks"
