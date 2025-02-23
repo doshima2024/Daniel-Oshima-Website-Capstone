@@ -20,13 +20,13 @@ class Song(db.Model, SerializerMixin):
         return value
     
     @validates("artist")
-    def validate_title(self, key, value):
+    def validate_artist(self, key, value):
         if not value or not isinstance(value, str):
             raise TypeError("Artist must exist and be a string")
         return value
     
     @validates("song_url")
-    def validate_title(self, key, value):
+    def validate_song_url(self, key, value):
         if not value or not isinstance(value, str):
             raise TypeError("Song URL must exist and be a string")
         return value
