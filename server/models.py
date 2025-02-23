@@ -13,6 +13,24 @@ class Song(db.Model, SerializerMixin):
 
     serialize_rules = ("comments", "-comments.song")
 
+    @validates("title")
+    def validate_title(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Title must exist and be a string")
+        return value
+    
+    @validates("artist")
+    def validate_title(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Artist must exist and be a string")
+        return value
+    
+    @validates("song_url")
+    def validate_title(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Song URL must exist and be a string")
+        return value
+
 class Comment(db.Model, SerializerMixin):
     __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
@@ -24,8 +42,35 @@ class Comment(db.Model, SerializerMixin):
 
     serialize_rules = ("song", "-song.comments")
 
+    @validates("user_name")
+    def validate_title(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Username must exist and be a string")
+        return value
+    
+    @validates("comment_content")
+    def validate_comment_content(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Comment must exist and be a string")
+        if len(value) > 250:
+            raise ValueError("Maximum characters for comment is 250")
+        return value
+
 class Guestbook(db.Model):
     __tablename__ = "guestbooks"
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String, nullable=False)
     entry_content = db.Column(db.String, nullable=False)
+
+    @validates("user_name")
+    def validate_user_name(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("User name must exist and be a string")
+        return value
+
+    @validates("entry_content")
+    def validate_entry_content(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Entry must exist and be a string")
+        if len(value) > 250:
+            raise ValueError("Entry must be less than 250 characters")
