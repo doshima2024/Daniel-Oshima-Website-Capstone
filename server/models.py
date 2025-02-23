@@ -23,3 +23,9 @@ class Comment(db.Model, SerializerMixin):
     song = db.relationship("Song", back_populates="comments")
 
     serialize_rules = ("song", "-song.comments")
+
+class Guestbook(db.Model):
+    __tablename__ = "guestbooks"
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String, nullable=False)
+    entry_content = db.Column(db.String, nullable=False)
