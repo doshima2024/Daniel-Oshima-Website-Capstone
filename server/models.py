@@ -61,3 +61,16 @@ class Guestbook(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String, nullable=False)
     entry_content = db.Column(db.String, nullable=False)
+
+    @validates("user_name")
+    def validate_user_name(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("User name must exist and be a string")
+        return value
+
+    @validates("entry_content")
+    def validate_entry_content(self, key, value):
+        if not value or not isinstance(value, str):
+            raise TypeError("Entry must exist and be a string")
+        if len(value) > 250:
+            raise ValueError("Entry must be less than 250 characters")
