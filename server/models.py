@@ -1,9 +1,12 @@
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.orm import validates
-from app import db
+from server.app import db
 
 class Song(db.Model, SerializerMixin):
     __tablename__ = "songs"
+
+
+
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable=False)
     artist = db.Column(db.String, nullable=False)
@@ -33,6 +36,9 @@ class Song(db.Model, SerializerMixin):
 
 class Comment(db.Model, SerializerMixin):
     __tablename__ = "comments"
+    
+ 
+    
     id = db.Column(db.Integer, primary_key=True)
     song_id = db.Column(db.Integer, db.ForeignKey("songs.id"), nullable=False)
     user_name = db.Column(db.String, nullable=False)
@@ -58,6 +64,9 @@ class Comment(db.Model, SerializerMixin):
 
 class Guestbook(db.Model):
     __tablename__ = "guestbooks"
+    
+  
+    
     id = db.Column(db.Integer, primary_key=True)
     user_name = db.Column(db.String, nullable=False)
     entry_content = db.Column(db.String, nullable=False)
