@@ -4,9 +4,11 @@ from sqlalchemy.orm import validates
 from flask_migrate import Migrate
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.exc import IntegrityError
+from flask_cors import CORS
 
 
 app = Flask(__name__)
+CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://apple:Dubspot8320!@localhost/db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['JSON_COMPACT'] = False
@@ -29,6 +31,7 @@ def get_songs():
         return jsonify({"error": str(exception)}), 500
     
 # GET /songs/search/<string:query> : Allows users to search for a song by name.
+#(Tested via Postman)
 
 @app.get("/songs/search/<string:query>")
 def search_song(query):
@@ -38,6 +41,8 @@ def search_song(query):
         return jsonify([song.to_dict() for song in songs])
     except Exception as exception:
         return jsonify({"error": str(exception)}), 500
+    
+
 
 if __name__ == "__main__":
     app.run(debug=True)
