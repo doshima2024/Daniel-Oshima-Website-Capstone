@@ -17,9 +17,15 @@ migrate = Migrate(app,db)
 
 from server.models import *
 
-@app.route('/')
-def home():
-    return "Testing!"
+#GET/songs : retrieves all songs from the backend for display on the songs page upon load.
+
+@app.get("/songs")
+def get_songs():
+    try:
+        songs = Song.query.all()
+        return jsonify([song.to_dict() for song in songs])
+    except Exception as exception:
+        return jsonify({"error": str(exception)}), 500
 
 if __name__ == "__main__":
     app.run(debug=True)
