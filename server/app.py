@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.orm import validates
 from flask_migrate import Migrate
@@ -52,6 +52,30 @@ def get_comments(id):
         return jsonify([comment.to_dict() for comment in song.comments]), 200
     else:
         return jsonify({"error": "That song doesn't exist."}), 404
+    
+#POST/ comments/<int:id> : Allows users to comment on a specific song 
+#(Tested with Postman)
+
+@app.post("/comments/<int:id>")
+def post_comment(id):
+    song = Song.query.where(Song.id == id).first()
+    if not song:
+        return jsonify({"error": "Song not found."}), 404
+    data = request.json
+    user_name = data.get("user_name")
+    comment_content = data.get("comment_content")
+
+    if not user_name or not comment_content:
+        return jsonify({"error": "User name and comment are required fields."}), 400
+    
+    new_comment = Comment(song_id=id, user_name=user_name, comment_content=comment_content)
+
+    try:
+        db.session.add(new_comment)
+        db.session.commit()
+        return jsonify(new_comment.to_dict()), 201
+    except Exception as exception:
+        return jsonify({"error": str(exception)}), 500
     
 
 
