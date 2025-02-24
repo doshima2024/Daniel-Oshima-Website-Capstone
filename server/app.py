@@ -42,6 +42,17 @@ def search_song(query):
     except Exception as exception:
         return jsonify({"error": str(exception)}), 500
     
+# GET/song/<int:id>/comments : Returns all comments for a specific song
+#(Tested in Postman)
+
+@app.get("/song/<int:id>/comments")
+def get_comments(id):
+    song = Song.query.where(Song.id == id).first()
+    if song:
+        return jsonify([comment.to_dict() for comment in song.comments]), 200
+    else:
+        return jsonify({"error": "That song doesn't exist."}), 404
+    
 
 
 if __name__ == "__main__":
