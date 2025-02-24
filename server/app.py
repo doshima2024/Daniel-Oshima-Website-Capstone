@@ -18,11 +18,23 @@ migrate = Migrate(app,db)
 from server.models import *
 
 #GET/songs : retrieves all songs from the backend for display on the songs page upon load.
+#(Tested via Postman)
 
 @app.get("/songs")
 def get_songs():
     try:
         songs = Song.query.all()
+        return jsonify([song.to_dict() for song in songs])
+    except Exception as exception:
+        return jsonify({"error": str(exception)}), 500
+    
+# GET /songs/search/<string:query> : Allows users to search for a song by name.
+
+@app.get("/songs/search/<string:query>")
+def search_song(query):
+    try:
+        query = query.strip()
+        songs = Song.query.filter(Song.title.ilike(f"%{query}%")).all()
         return jsonify([song.to_dict() for song in songs])
     except Exception as exception:
         return jsonify({"error": str(exception)}), 500
