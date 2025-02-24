@@ -9,7 +9,6 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 psycopg = {extras = ["pool", "binary"], version = "*"}
 sqlalchemy-serializer = "*"
-cors = "*"
 flask-cors = "*"
 
 [dev-packages]
