@@ -77,6 +77,54 @@ def post_comment(id):
     except Exception as exception:
         return jsonify({"error": str(exception)}), 500
     
+#GET/ Guestbook : retrieves all guestbook entries to display on home page on load
+#(Tested via Postman)
+
+@app.get("/guestbook")
+def get_guestbook_entries():
+    try:
+        entries = Guestbook.query.all()
+        return jsonify([entry.to_dict() for entry in entries])
+    except Exception as exception:
+        return jsonify({"error": str(exception)}), 500
+    
+# POST/Guestbook : Allows users to post an entry in the “Guestbook” on the home page, this is separate from the comments which will be located on the Songs page and tied to a specific song.
+
+@app.post("/guestbook")
+def post_guestbook_entry():
+    data = request.json
+    #debugging
+    print("Request JSON:", data)
+
+    if data is None:
+        return jsonify({"error": "Invalid JSON formatting"}), 400
+    user_name = data.get("user_name")
+    entry_content = data.get("entry_content")
+
+    #debugging
+    print(f"user_name: {user_name}, entry_content: {entry_content}")
+
+    if not user_name or not entry_content:
+        return jsonify({"error" : " User name and Guestbook entry are required fields"}), 400
+    
+    new_entry = Guestbook(user_name=user_name, entry_content=entry_content)
+
+    #debugging
+
+    print("Session dirty:", db.session.dirty)
+    print("Session new:", db.session.new)
+    print("New entry object:", new_entry.__dict__)
+    try:
+        db.session.add(new_entry)
+        db.session.commit()
+        return jsonify(new_entry.to_dict()), 201
+    except Exception as exception:
+        db.session.rollback()
+        #debugging:
+        print("Database Error:", str(exception))
+        return jsonify({"error": str(exception)}), 500
+
+    
 
 
 if __name__ == "__main__":

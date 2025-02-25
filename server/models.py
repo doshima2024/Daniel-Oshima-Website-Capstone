@@ -62,7 +62,7 @@ class Comment(db.Model, SerializerMixin):
             raise ValueError("Maximum characters for comment is 250")
         return value
 
-class Guestbook(db.Model):
+class Guestbook(db.Model, SerializerMixin):
     __tablename__ = "guestbooks"
     
   
@@ -71,15 +71,20 @@ class Guestbook(db.Model):
     user_name = db.Column(db.String, nullable=False)
     entry_content = db.Column(db.String, nullable=False)
 
-    @validates("user_name")
-    def validate_user_name(self, key, value):
-        if not value or not isinstance(value, str):
-            raise TypeError("User name must exist and be a string")
-        return value
+   # @validates("user_name")
+    
+  #  def validate_user_name(self, key, value):
+        #debugging
+  #      print(f"Validating user_name: {value}")
+   #     if not value or not isinstance(value, str):
+    #        raise TypeError("User name must exist and be a string")
+  #      return value
 
-    @validates("entry_content")
-    def validate_entry_content(self, key, value):
-        if not value or not isinstance(value, str):
-            raise TypeError("Entry must exist and be a string")
-        if len(value) > 250:
-            raise ValueError("Entry must be less than 250 characters")
+  #  @validates("entry_content")
+  #  def validate_entry_content(self, key, value):
+        #debugging
+  #      print(f"Validating entry_content: {value}")
+  #      if not value or not isinstance(value, str):
+  #          raise TypeError("Entry must exist and be a string")
+  #      if len(value) > 250:
+   #         raise ValueError("Entry must be less than 250 characters")
