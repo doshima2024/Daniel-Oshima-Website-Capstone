@@ -71,6 +71,13 @@ class Guestbook(db.Model, SerializerMixin):
     user_name = db.Column(db.String, nullable=False)
     entry_content = db.Column(db.String, nullable=False)
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "user_name": self.user_name,
+            "entry_content": self.entry_content
+        }
+
    # @validates("user_name")
     
   #  def validate_user_name(self, key, value):
