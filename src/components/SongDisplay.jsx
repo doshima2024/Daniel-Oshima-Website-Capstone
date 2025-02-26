@@ -3,6 +3,7 @@ import React, {useState, useEffect} from "react";
 function SongDisplay() {
     const [songs, setSongs] = useState([])
     const [comments, setComments] = useState({})
+    const [newComments, setNewComments] = useState({})
     const [usernames, setUsernames] = useState({})
 
     useEffect(() =>{
@@ -13,9 +14,9 @@ function SongDisplay() {
     }, [])
 
     const fetchComments = (id) => {
-        fetch("http://localhost:5000/song/${id}/comments")
+        fetch(`http://localhost:5000/song/${id}/comments`)
         .then(response => response.json())
-        .then(data => setComments(previousComments => ({...previousComments, [id]: data})))
+        .then(data => setComments(previousComments => ({...previousComments, [id]: Array.isArray(data) ? data : []})))
         .catch(error => console.error("Error fetching songs:", error))
     }
 
@@ -23,14 +24,15 @@ function SongDisplay() {
         setUsernames({...usernames, [id]: event.target.value})
     }
     
-    const updateComment = (id, event) => {
-        setComments({...comments, [id]: event.target.value})
+    const updateNewComment = (id, event) => {
+        setNewComments({...newComments, [id]: event.target.value})
     }
+
     const postComment = (id, event) => {
         event.preventDefault();
 
         const userName = usernames[id].trim()
-        const commentContent = comments[id].trim()
+        const commentContent = newComments[id].trim()
 
         if (!userName || !commentContent) {
             alert("Username and comment are required fields")
@@ -39,7 +41,7 @@ function SongDisplay() {
 
         const newComment = {user_name: userName, comment_content: commentContent, song_id: id}
 
-        fetch("http://localhost:5000/comments", {
+        fetch(`http://localhost:5000/comments/${id}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -48,7 +50,7 @@ function SongDisplay() {
         })
         .then(response => response.json())
         .then(() => {
-            setComments({...comments, [id]: ""})
+            setNewComments({...newComments, [id]: ""})
             setUsernames({...usernames, [id]: ""})
             fetchComments(id)
         })
@@ -66,13 +68,13 @@ function SongDisplay() {
                         </iframe>
                         <form onSubmit={(event) => postComment(song.id, event)}>
                             <input type="text" value={usernames[song.id] || ""} onChange={(event) => updateUsername(song.id, event)} placeholder="Enter username" />
-                            <input type="text" value={comments[song.id] || ""} onChange={(event) => updateComment(song.id, event)} placeholder="Leave a comment!" />
+                            <input type="text" value={newComments[song.id] || ""} onChange={(event) => updateNewComment(song.id, event)} placeholder="Leave a comment!" />
                             <button type="submit">Post Comment</button>
                         </form>
                         <div>
                             <h3>Comments:</h3>
                             {(comments[song.id] || []).map((comment, index) => (
-                                <p key={index}><strong>{comment.user_name}</strong>{comment.comment_content}</p>
+                                <p key={index}><strong>{comment.user_name}</strong>: <br/>{comment.comment_content}</p>
                             ) )}
                         </div>
                     </div>
