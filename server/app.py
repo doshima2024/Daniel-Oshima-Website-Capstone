@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from sqlalchemy.ext.associationproxy import association_proxy
 from sqlalchemy.exc import IntegrityError
 from flask_cors import CORS
+import requests
 
 
 app = Flask(__name__)
@@ -12,12 +13,15 @@ CORS(app)
 app.config["SQLALCHEMY_DATABASE_URI"] = "postgresql://apple:Dubspot8320!@localhost/db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.config['JSON_COMPACT'] = False
+CLIENT_ID = "88e3f8b8ba3f44d5bd49f2caf86d0f00"
+CLIENT_SECRET = "0554e796355b42f99e31a4be2905cc0d"
 
 
 db = SQLAlchemy(app)
 migrate = Migrate(app,db)
 
 from server.models import *
+
 
 #GET/songs : retrieves all songs from the backend for display on the songs page upon load.
 #(Tested via Postman)
@@ -30,7 +34,7 @@ def get_songs():
     except Exception as exception:
         return jsonify({"error": str(exception)}), 500
     
-# GET /songs/search/<string:query> : Allows users to search for a song by name.
+# GET /songs/search/<string:query> : Allows users to search for a song by name. 
 #(Tested via Postman)
 
 @app.get("/songs/search/<string:query>")
@@ -93,38 +97,67 @@ def get_guestbook_entries():
 @app.post("/guestbook")
 def post_guestbook_entry():
     data = request.json
-    #debugging
-    print("Request JSON:", data)
+  
 
     if data is None:
         return jsonify({"error": "Invalid JSON formatting"}), 400
     user_name = data.get("user_name")
     entry_content = data.get("entry_content")
 
-    #debugging
-    print(f"user_name: {user_name}, entry_content: {entry_content}")
+   
 
     if not user_name or not entry_content:
         return jsonify({"error" : " User name and Guestbook entry are required fields"}), 400
     
     new_entry = Guestbook(user_name=user_name, entry_content=entry_content)
 
-    #debugging
-
-    print("Session dirty:", db.session.dirty)
-    print("Session new:", db.session.new)
-    print("New entry object:", new_entry.__dict__)
     try:
         db.session.add(new_entry)
         db.session.commit()
         return jsonify(new_entry.to_dict()), 201
     except Exception as exception:
         db.session.rollback()
-        #debugging:
-        print("Database Error:", str(exception))
         return jsonify({"error": str(exception)}), 500
-
     
+
+# Function to retrieve a Spotify authentication token
+
+def get_token():
+    response = requests.post("https://accounts.spotify.com/api/token", 
+        data={
+            "grant_type": "client_credentials",
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
+        }, headers={
+            "Content-Type": "application/x-www-form-urlencoded",
+        })
+       
+    if response.ok:
+        return response.json().get("access_token")
+    else:
+        raise Exception("Failed to retrieve access token")
+    
+#GET/search will be used to retrieve track search results from Spotify's API
+
+@app.get("/search")
+def search_spotify_tracks():
+    query = request.args.get("q")
+    if not query:
+        return jsonify({"error": "No search query provided"})
+    
+    token = get_token()
+    if not token:
+        return jsonify({"error": "Failed to get token for access"})
+    
+    url = f"https://api.spotify.com/v1/search?q={query}%20artist%3ADaniel%20Oshima&type=track"
+    headers = {"Authorization": f"Bearer {token}"}
+    response = requests.get(url, headers=headers)
+
+    if response.ok:
+        return jsonify(response.json())
+    else:
+        return jsonify({"error": "API request failed"})
+
 
 
 if __name__ == "__main__":
