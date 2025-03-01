@@ -143,7 +143,7 @@ def get_token():
 def search_spotify_tracks():
     query = request.args.get("q")
     if not query:
-        return jsonify({"error": "No search query provided"})
+        return jsonify({"error": "No search query provided"}), 400
     
     token = get_token()
     if not token:

@@ -48,8 +48,9 @@ function Home() {
 He studied at Oberlin College, where he spent time as the Hip Hop Director at Oberlin's WOBC radio station, was tutored in electronic music production and opened for various Hip-Hop acts, including Blu and Kendrick Lamar during the former’s Section 80 tour. He has interned at Cornerstone Productions and Decon with DJ and producer OP! of the NYC based collective I Love Vinyl. He has also interned at the Hip-Hop store and hub Fatbeats with another mentor, the artist and producer J57.
 A collector of records and avid explorer of sounds from all genres of music, Daniel continues his first love of creating sample based hip-hop beats, and also explores and experiments with electronic sounds, live instrumentation and other styles of music in his work. </p>
             <h2>Guestbook</h2>
-            <input name="username" type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter A Username"/>
+            
             <form onSubmit={postMessage}>
+                <input name="username" type="text" value={username} onChange={(event) => setUsername(event.target.value)} placeholder="Enter A Username"/>  
                 <input name="message" type="text" value={message} onChange={(event) => setMessage(event.target.value)} placeholder="Leave A Message"/>
                 <button type="submit">Post Message</button>
             </form>

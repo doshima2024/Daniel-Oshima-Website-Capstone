@@ -4,6 +4,7 @@ import SongDisplay from "./components/SongDisplay";
 import Contact from "./components/Contact";
 import NavBar from "./components/NavBar";
 import ErrorPage from "./components/ErrorPage";
+import SongSearch from "./components/SongSearch";
 import {BrowserRouter as Router, Route, Routes} from "react-router-dom"
 
 function App() {
@@ -13,7 +14,12 @@ return (
     <NavBar />
     <Routes>
       <Route path="/" element={<Home />} />
-      <Route path="/songs" element={<SongDisplay />} />
+      <Route path="/songs" element={
+        <>
+        <SongDisplay />
+        <SongSearch />
+        </>
+        } />
       <Route path="/contact" element={<Contact />} />
       <Route path="*" element={<ErrorPage />} />
     </Routes>

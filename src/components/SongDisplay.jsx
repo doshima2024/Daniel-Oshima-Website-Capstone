@@ -63,7 +63,7 @@ function SongDisplay() {
             <div>
                 {songs.map((song) => (
                     <div key={song.id}>
-                        <h2>{song.title} by {song.artist}</h2>
+                        <h4>{song.title} by {song.artist}</h4>
                         <iframe src={`https://open.spotify.com/embed/track/${song.song_url.split("/").pop()}`} width="300" height="80" frameBorder="0" allow="encrypted-media" title={song.title}>
                         </iframe>
                         <form onSubmit={(event) => postComment(song.id, event)}>
