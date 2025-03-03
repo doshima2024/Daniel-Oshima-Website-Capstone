@@ -13,6 +13,7 @@ function SongDisplay() {
         .catch(error => console.error("Error fetching songs:", error))
     }, [])
 
+    // functional update to ensure we're always working with the latest state
     const fetchComments = (id) => {
         fetch(`http://localhost:5000/song/${id}/comments`)
         .then(response => response.json())
@@ -58,15 +59,16 @@ function SongDisplay() {
     }
 
     return (
-        <div>
-            <h1>Selected Songs From Daniel Oshima's Catalogue</h1>
+        <div className="d-flex justify-content-center text-center bg-primary" style={{ minHeight: "100vh", width: "100vw" }}>
+            <div className="card shadow-lg p-4 mx-auto bg-warning" style={{ maxWidth: "700px", width: "100%" }}>
+            <h1 className="mb-3 text-primary">Selected Songs From Daniel Oshima's Catalogue</h1>
             <div>
                 {songs.map((song) => (
                     <div key={song.id}>
                         <h4>{song.title} by {song.artist}</h4>
                         <iframe src={`https://open.spotify.com/embed/track/${song.song_url.split("/").pop()}`} width="300" height="80" frameBorder="0" allow="encrypted-media" title={song.title}>
                         </iframe>
-                        <form onSubmit={(event) => postComment(song.id, event)}>
+                        <form onSubmit={(event) => postComment(song.id, event)} className="d-flex flex-column gap-2">
                             <input type="text" value={usernames[song.id] || ""} onChange={(event) => updateUsername(song.id, event)} placeholder="Enter username" />
                             <input type="text" value={newComments[song.id] || ""} onChange={(event) => updateNewComment(song.id, event)} placeholder="Leave a comment!" />
                             <button type="submit">Post Comment</button>
@@ -79,6 +81,7 @@ function SongDisplay() {
                         </div>
                     </div>
                 ))}
+               </div>
             </div>
         </div>
     )
