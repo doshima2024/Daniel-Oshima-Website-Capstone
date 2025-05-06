@@ -9,7 +9,9 @@ function SongDisplay() {
     useEffect(() =>{
         fetch("http://localhost:5000/songs")
         .then(response => response.json())
-        .then(data => setSongs(data))
+        .then(data => {
+            setSongs(data)
+            data.forEach(song => fetchComments(song.id))})
         .catch(error => console.error("Error fetching songs:", error))
     }, [])
 
